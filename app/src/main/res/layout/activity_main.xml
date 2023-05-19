@@ -39,7 +39,7 @@
         android:layout_width="@dimen/post_avatar_size"
         android:layout_height="@dimen/post_avatar_size"
         android:contentDescription="@string/app_name"
-        app:layaut_constrainStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         tools:src="@drawable/ic_netology" />
@@ -57,7 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
         android:autoLink="web"
-        app:layaut_constrainStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topBarrierPublished"
@@ -65,8 +64,8 @@
 
     <ImageView
         android:id="@+id/menu"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/asset_size"
+        android:layout_height="@dimen/asset_size"
         android:contentDescription="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -81,8 +80,8 @@
 
     <ImageView
         android:id="@+id/likesIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/asset_size"
+        android:layout_height="@dimen/asset_size"
         android:layout_marginTop="@dimen/common_spacing"
         android:contentDescription="@string/app_name"
         app:layout_constraintTop_toBottomOf="@id/content"
@@ -100,8 +99,8 @@
 
     <ImageView
         android:id="@+id/shareIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/asset_size"
+        android:layout_height="@dimen/asset_size"
         android:layout_marginStart="@dimen/common_spacing"
         android:layout_marginTop="@dimen/common_spacing"
         android:contentDescription="@string/app_name"
@@ -121,8 +120,8 @@
 
     <ImageView
         android:id="@+id/viewsIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/asset_size"
+        android:layout_height="@dimen/asset_size"
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginEnd="4dp"
         android:contentDescription="@string/app_name"
