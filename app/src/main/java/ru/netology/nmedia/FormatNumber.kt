@@ -1,6 +1,6 @@
 package ru.netology.nmedia
 
-open class FormatNumber {
+object FormatNumber {
     fun format(number: Long): String {
         return when {
             number < 1_000 -> number.toString()

@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
     val binding: ActivityMainBinding
         get() = _binding!!
 
-    val formatNumber = FormatNumber()
+    val formatNumber = FormatNumber
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
