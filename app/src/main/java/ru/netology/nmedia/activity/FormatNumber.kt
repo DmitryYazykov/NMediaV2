@@ -1,4 +1,4 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.activity
 
 object FormatNumber {
     fun format(number: Long): String {
