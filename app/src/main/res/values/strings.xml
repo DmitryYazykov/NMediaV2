@@ -5,4 +5,8 @@
     <string name="share">share</string>
     <string name="view">views</string>
     <string name="menu">menu</string>
+    <string name="post_text">Post text</string>
+    <string name="error_empty_content">Content can\'t be empty</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
 </resources>
