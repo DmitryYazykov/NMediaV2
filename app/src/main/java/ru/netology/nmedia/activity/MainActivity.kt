@@ -13,30 +13,32 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 import ru.netology.nmedia.util.AndroidUtils
 
 class MainActivity : AppCompatActivity() {
+    val viewModel: PostViewModel by viewModels()
+
+    private val interactionListener: OnInteractionListener = object : OnInteractionListener {
+        override fun onLike(post: Post) {
+            viewModel.likeById(post.id)
+        }
+
+        override fun onShare(post: Post) {
+            viewModel.shareById(post.id)
+        }
+
+        override fun onEdit(post: Post) {
+            viewModel.edit(post)
+        }
+
+        override fun onRemove(post: Post) {
+            viewModel.removeById(post.id)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val viewModel: PostViewModel by viewModels()
-
-        val adapter = PostsAdapter(object : OnInteractionListener {
-            override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
-            }
-
-            override fun onShare(post: Post) {
-                viewModel.shareById(post.id)
-            }
-
-            override fun onEdit(post: Post) {
-                viewModel.edit(post)
-            }
-
-            override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
-            }
-        })
+        val adapter = PostsAdapter(interactionListener)
         binding.list.adapter = adapter
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
