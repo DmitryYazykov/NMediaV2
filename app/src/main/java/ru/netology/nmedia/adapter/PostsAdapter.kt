@@ -11,7 +11,7 @@ import ru.netology.nmedia.activity.FormatNumber
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 
-interface OnInteractionListener {          // сгрупперуем все обработчики в интерфейсе
+interface OnInteractionListener {                       // группировка всех обработчики в интерфейсе
     fun onLike(post: Post) {}
     fun onShare(post: Post) {}
     fun onEdit(post: Post) {}

@@ -6,7 +6,7 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
 
-private val empty = Post(                          // data-объект для заполнения
+private val empty = Post(                         // data-объект для заполнения
     id = 0,
     author = "",
     content = "",
@@ -22,16 +22,19 @@ class PostViewModel : ViewModel() {
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
+    val cancelVisible = MutableLiveData(false)
 
     fun save() {                                  // ф-ия сохранения контента
         edited.value?.let {
             repository.save(it)
         }
         edited.value = empty
+        cancelVisible.value = false
     }
 
     fun edit(post: Post) {                        // ф-ия изменения контента
         edited.value = post
+        cancelVisible.value = true
     }
 
     fun changeContent(content: String) {
@@ -40,6 +43,7 @@ class PostViewModel : ViewModel() {
             edited.value = edited.value?.copy(content = text)
         }
     }
+
     fun likeById(id: Long) = repository.likeById(id)
     fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
