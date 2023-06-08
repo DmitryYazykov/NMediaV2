@@ -24,11 +24,15 @@ class PostViewModel : ViewModel() {
     val edited = MutableLiveData(empty)
     val cancelVisible = MutableLiveData(false)
 
+    fun cancelEdit() {                   // ф-ия для шаблона пустого поста при отмене редактирования
+        edited.value = empty
+    }
+
     fun save() {                                  // ф-ия сохранения контента
         edited.value?.let {
             repository.save(it)
         }
-        edited.value = empty
+        cancelEdit()
         cancelVisible.value = false
     }
 

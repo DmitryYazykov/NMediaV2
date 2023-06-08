@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         deleteButton.setOnClickListener {                         // слушатель на кнопку deleteButton
             editText.setText(originalText)
             AndroidUtils.hideKeyboard(editText)                           // вызываю объект скрытия клавиатуры
+            viewModel.cancelEdit()
         }
 
         // код для сохранения оригинального текста при начале редактирования
