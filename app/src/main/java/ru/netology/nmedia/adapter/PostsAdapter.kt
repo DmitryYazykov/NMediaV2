@@ -41,12 +41,14 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            likeCount.text = FormatNumber.format(post.likes)
-            shareCount.text = FormatNumber.format(post.share)
-            viewCount.text = FormatNumber.format(post.view)
-            likeButton.setImageResource(
-                if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
-            )
+            viewButton.text = FormatNumber.format(post.view)
+
+            likeButton.isChecked = post.likedByMe               // обращаемся к свойству isChecked и записываем туда флаг у поста (был поставлен лайк или нет)
+            likeButton.text = FormatNumber.format(post.likes)   // выводим количество лайков
+
+            shareButton.isCheckable = post.shareByMe
+            shareButton.text = FormatNumber.format(post.share)  // выводим количество репостов
+
             menuButton.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
