@@ -11,4 +11,7 @@
     <string name="edit">Изменить</string>
     <string name="remove">Удалить</string>
     <string name="delete">Удалить</string>
+    <string name="chooser_share_post">Поделиться постом</string>
+    <string name="save">Сохранить</string>
+    <string name="add_post">Добавить пост</string>
 </resources>

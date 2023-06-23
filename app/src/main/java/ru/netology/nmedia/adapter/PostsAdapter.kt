@@ -43,7 +43,8 @@ class PostViewHolder(
             content.text = post.content
             viewButton.text = FormatNumber.format(post.view)
 
-            likeButton.isChecked = post.likedByMe               // обращаемся к свойству isChecked и записываем туда флаг у поста (был поставлен лайк или нет)
+            // обращаемся к свойству isChecked и записываем туда флаг у поста (был поставлен лайк или нет)
+            likeButton.isChecked = post.likedByMe
             likeButton.text = FormatNumber.format(post.likes)   // выводим количество лайков
 
             shareButton.isCheckable = post.shareByMe

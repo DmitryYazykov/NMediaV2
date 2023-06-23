@@ -22,30 +22,24 @@ class PostViewModel : ViewModel() {
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
-    val cancelVisible = MutableLiveData(false)
-
-    fun cancelEdit() {                   // ф-ия для шаблона пустого поста при отмене редактирования
-        edited.value = empty
-    }
 
     fun save() {                                  // ф-ия сохранения контента
         edited.value?.let {
             repository.save(it)
         }
-        cancelEdit()
-        cancelVisible.value = false
+        edited.value = empty
     }
 
     fun edit(post: Post) {                        // ф-ия изменения контента
         edited.value = post
-        cancelVisible.value = true
     }
 
     fun changeContent(content: String) {
         val text = content.trim()
-        if (edited.value?.content != text) {
-            edited.value = edited.value?.copy(content = text)
+        if (edited.value?.content == text) {
+            return
         }
+        edited.value = edited.value?.copy(content = text)
     }
 
     fun likeById(id: Long) = repository.likeById(id)

@@ -10,4 +10,7 @@
     <string name="edit">Edit</string>
     <string name="remove">Remove</string>
     <string name="delete">delete</string>
+    <string name="chooser_share_post">Share post</string>
+    <string name="save">Save</string>
+    <string name="add_post">Add post</string>
 </resources>
