@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import ru.netology.nmedia.databinding.ActivityNewPostBinding
-import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
+import ru.netology.nmedia.viewmodel.PostViewModel
 
 class EditPostActivity : AppCompatActivity() {
     companion object {
@@ -14,7 +15,7 @@ class EditPostActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityNewPostBinding
-    private lateinit var postRepository: PostRepositoryInMemoryImpl
+    private lateinit var postViewModel: PostViewModel
     private var postId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,24 +23,20 @@ class EditPostActivity : AppCompatActivity() {
         binding = ActivityNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        postRepository = PostRepositoryInMemoryImpl()
+        postViewModel = ViewModelProvider(this)[PostViewModel::class.java]
 
         postId = intent.getLongExtra(EXTRA_POST_ID, -1)
 
-        val postText = getPostTextById(postId)
+        val postText = postViewModel.getPostTextById(postId)
         binding.editText.setText(postText)
 
         binding.save.setOnClickListener {
             val editedText = binding.editText.text.toString()
             val intent = Intent()
             intent.putExtra(EXTRA_EDITED_TEXT, editedText)
+            postViewModel.updatePostText(editedText)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-    }
-
-    private fun getPostTextById(postId: Long): String {
-        val post = postRepository.getAll().value?.find { it.id == postId }
-        return post?.content ?: ""
     }
 }

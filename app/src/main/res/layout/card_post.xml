@@ -135,7 +135,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/topBarrierContent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topBarrierPublished"
+        app:layout_constraintTop_toBottomOf="@id/content"
         tools:text="@sample/posts.json/data/content" />
 
     <ImageButton

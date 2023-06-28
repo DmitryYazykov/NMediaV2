@@ -51,7 +51,7 @@ class PostViewHolder(
             content.text = post.content
             viewButton.text = FormatNumber.format(post.view)
 
-            if (post.video != null) {
+            if (!post.video.isNullOrBlank()) {
             videoThumbnail.visibility = View.VISIBLE
             playButton.visibility = View.VISIBLE
 

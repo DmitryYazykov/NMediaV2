@@ -24,14 +24,14 @@ class PostViewModel : ViewModel() {
     val data = repository.getAll()
     private val edited = MutableLiveData(empty)
 
-    fun save() {                                  // ф-ия сохранения контента
+    fun save() {
         edited.value?.let {
             repository.save(it)
         }
         edited.value = empty
     }
 
-    fun edit(post: Post) {                        // ф-ия изменения контента
+    fun edit(post: Post) {
         edited.value = post
     }
 
@@ -42,6 +42,7 @@ class PostViewModel : ViewModel() {
         }
         edited.value = edited.value?.copy(content = text)
     }
+
     fun updatePostText(text: String) {
         edited.value?.let { post ->
             val updatedPost = post.copy(content = text)
@@ -53,4 +54,8 @@ class PostViewModel : ViewModel() {
     fun likeById(id: Long) = repository.likeById(id)
     fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
+    fun getPostTextById(postId: Long): String {       // Получаем текст поста по его идентификатору
+        val post = data.value?.find { it.id == postId }
+        return post?.content ?: ""
+    }
 }
