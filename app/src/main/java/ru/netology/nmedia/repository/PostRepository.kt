@@ -9,4 +9,5 @@ interface PostRepository {                // интерфейс, описыва�
     fun shareById(id: Long)               // увеличение счетчика репостов поста с заданным идентификатором
     fun removeById(id: Long)              // удаление поста
     fun save(post: Post)                  // сохранение поста
+    fun getPostById(postId: Long): Post?
 }

@@ -6,10 +6,10 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 
 // контракт для нового поста
-class NewPostResultContract : ActivityResultContract<Unit, String?>() {
+class NewPostResultContract : ActivityResultContract<String?, String?>() {
 
     // контракт создаёт intent и его вызывает
-    override fun createIntent(context: Context, input: Unit): Intent =
+    override fun createIntent(context: Context, input: String?): Intent =
         Intent(context, NewPostActivity::class.java)
 
     // обработка получаемого результата

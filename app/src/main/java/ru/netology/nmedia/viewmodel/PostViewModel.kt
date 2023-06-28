@@ -15,13 +15,14 @@ private val empty = Post(                         // data-объект для з
     likedByMe = false,
     share = 0,
     shareByMe = false,
-    view = 0
+    view = 0,
+    video = ""
 )
 
 class PostViewModel : ViewModel() {
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
-    val edited = MutableLiveData(empty)
+    private val edited = MutableLiveData(empty)
 
     fun save() {                                  // ф-ия сохранения контента
         edited.value?.let {
@@ -40,6 +41,13 @@ class PostViewModel : ViewModel() {
             return
         }
         edited.value = edited.value?.copy(content = text)
+    }
+    fun updatePostText(text: String) {
+        edited.value?.let { post ->
+            val updatedPost = post.copy(content = text)
+            repository.save(updatedPost)
+            edited.value = updatedPost
+        }
     }
 
     fun likeById(id: Long) = repository.likeById(id)

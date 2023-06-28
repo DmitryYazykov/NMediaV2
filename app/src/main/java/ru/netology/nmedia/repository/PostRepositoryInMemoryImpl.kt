@@ -3,10 +3,21 @@ package ru.netology.nmedia.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dto.Post
-
 class PostRepositoryInMemoryImpl : PostRepository {
     private var nextId = 1L
     private var posts = listOf(
+        Post(
+            id = nextId++,
+            author = "Нетология. Университет интернет-профессий будущего",
+            content = "Видео с котиками",
+            published = "22 сентября в 10:14",
+            likes = 3_999,
+            likedByMe = false,
+            share = 1_990,
+            shareByMe = false,
+            view = 5_175,
+            video = "https://www.youtube.com/watch?v=WhWc3b3KhnY"
+        ),
         Post(
             id = nextId++,
             author = "Нетология. Университет интернет-профессий будущего",
@@ -16,9 +27,10 @@ class PostRepositoryInMemoryImpl : PostRepository {
             published = "23 сентября в 10:12",
             likes = 999,
             likedByMe = false,
-            share = 999,
+            share = 990,
             shareByMe = false,
-            view = 1_000
+            view = 1_000,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -29,7 +41,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 1_990,
             shareByMe = false,
-            view = 5_175
+            view = 5_175,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -43,7 +56,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 5_000,
             shareByMe = false,
-            view = 11_000
+            view = 11_000,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -55,7 +69,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 40_900,
             shareByMe = false,
-            view = 51_000
+            view = 51_000,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -66,7 +81,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 50_000,
             shareByMe = false,
-            view = 55_234
+            view = 55_234,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -77,7 +93,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 99_995,
             shareByMe = false,
-            view = 100_000
+            view = 100_000,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -89,7 +106,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 110_995,
             shareByMe = false,
-            view = 151_000
+            view = 151_000,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -101,7 +119,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 799_990,
             shareByMe = false,
-            view = 876_543
+            view = 876_543,
+            video = null
         ),
         Post(
             id = nextId++,
@@ -116,7 +135,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likedByMe = false,
             share = 999_990,
             shareByMe = false,
-            view = 1_234_567
+            view = 1_234_567,
+            video = null
         )
     )
 
@@ -163,5 +183,9 @@ class PostRepositoryInMemoryImpl : PostRepository {
             }
             data.value = posts
         }
+    }
+
+    override fun getPostById(postId: Long): Post? {
+        return posts.find { it.id == postId }
     }
 }

@@ -92,7 +92,7 @@
         android:contentDescription="@string/like"
         app:icon="@drawable/ic_like_selector"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content"
+        app:layout_constraintTop_toBottomOf="@+id/topBarrierContent"
         tools:text="123" />
 
     <com.google.android.material.button.MaterialButton
@@ -107,7 +107,7 @@
         android:contentDescription="@string/share"
         app:icon="@drawable/ic_share_selector"
         app:layout_constraintStart_toEndOf="@+id/likeButton"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintTop_toBottomOf="@id/topBarrierContent"
         tools:text="123" />
 
     <com.google.android.material.button.MaterialButton
@@ -121,7 +121,34 @@
         android:contentDescription="@string/view"
         app:icon="@drawable/ic_views_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintTop_toBottomOf="@id/topBarrierContent"
         tools:text="200" />
+
+    <ImageView
+        android:id="@+id/videoThumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="210dp"
+        android:autoLink="web"
+        android:contentDescription="@string/video"
+        android:src="@drawable/video_placeholder"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/topBarrierContent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBarrierPublished"
+        tools:text="@sample/posts.json/data/content" />
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/play"
+        android:src="@drawable/ic_play_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/videoThumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/videoThumbnail"
+        app:layout_constraintStart_toStartOf="@+id/videoThumbnail"
+        app:layout_constraintTop_toTopOf="@+id/videoThumbnail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

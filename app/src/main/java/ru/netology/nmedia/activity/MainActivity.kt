@@ -1,7 +1,9 @@
 package ru.netology.nmedia.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,13 +15,22 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    private val viewModel: PostViewModel by viewModels()
+    private val updatePostLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val editedText = result.data?.getStringExtra(EditPostActivity.EXTRA_EDITED_TEXT)
+                editedText?.let { text ->
+                    viewModel.updatePostText(text)
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val viewModel: PostViewModel by viewModels()
 
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
@@ -27,6 +38,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onEdit(post: Post) {
+                openEditPostActivity(post)
                 viewModel.edit(post)
             }
 
@@ -36,36 +48,37 @@ class MainActivity : AppCompatActivity() {
 
             override fun onShare(post: Post) {
                 viewModel.shareById(post.id)
-                val intent = Intent().apply {                      // создаём интент
+                val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, post.content)
-                    type = "text/plain"                                      // указываем тип данных
+                    type = "text/plain"
                 }
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                startActivity(shareIntent)                                  // вызов chooser
+                startActivity(shareIntent)
             }
         })
-        binding.list.adapter = adapter
-        viewModel.data.observe(this) { posts ->
-            adapter.submitList(posts)
-        }
-
-        binding.list.adapter = adapter
-        viewModel.data.observe(this) { posts ->
-            adapter.submitList(posts)
-        }
-
-        // зарегистрировали контракт для возврата значения
         val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
             result ?: return@registerForActivityResult
             viewModel.changeContent(result)
             viewModel.save()
         }
-
-        // вызываем при нажатии на кнопку fab
         binding.fab.setOnClickListener {
-            newPostLauncher.launch()
+            newPostLauncher.launch(toString())
         }
+
+        binding.list.adapter = adapter
+
+        viewModel.data.observe(this) { posts ->
+            adapter.submitList(posts)
+        }
+    }
+
+    private fun openEditPostActivity(post: Post?) {
+        val intent = Intent(this, EditPostActivity::class.java)
+        post?.let {
+            intent.putExtra(EditPostActivity.EXTRA_POST_ID, it.id)
+        }
+        updatePostLauncher.launch(intent)
     }
 }

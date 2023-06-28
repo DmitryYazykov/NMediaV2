@@ -1,6 +1,9 @@
 package ru.netology.nmedia.adapter
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -35,13 +38,34 @@ class PostsAdapter(
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
+
 ) : RecyclerView.ViewHolder(binding.root) {
+    private fun openVideo(videoUrl: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+        itemView.context.startActivity(intent)
+    }
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
             published.text = post.published
             content.text = post.content
             viewButton.text = FormatNumber.format(post.view)
+
+            if (post.video != null) {
+            videoThumbnail.visibility = View.VISIBLE
+            playButton.visibility = View.VISIBLE
+
+                // Обработка клика на картинке-заглушке видео или кнопке "Play"
+                videoThumbnail.setOnClickListener {
+                    openVideo(post.video)
+                }
+                playButton.setOnClickListener {
+                    openVideo(post.video)
+                }
+            } else {
+                videoThumbnail.visibility = View.GONE
+                playButton.visibility = View.GONE
+            }
 
             // обращаемся к свойству isChecked и записываем туда флаг у поста (был поставлен лайк или нет)
             likeButton.isChecked = post.likedByMe

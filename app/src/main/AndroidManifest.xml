@@ -36,6 +36,9 @@
         <activity
             android:name=".activity.NewPostActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.EditPostActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

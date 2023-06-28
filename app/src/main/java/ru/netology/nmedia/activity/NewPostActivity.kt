@@ -12,7 +12,7 @@ class NewPostActivity : AppCompatActivity() {
         val binding = ActivityNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.editText.requestFocus()
-        binding.ok.setOnClickListener {                     // обработчик на кнопку OK
+        binding.save.setOnClickListener {                   // обработчик на кнопку Save
             val intent = Intent()                                   // создаём intent
             if (binding.editText.text.isNullOrBlank()) {            // проверка данных если Null
                 setResult(Activity.RESULT_CANCELED, intent)
