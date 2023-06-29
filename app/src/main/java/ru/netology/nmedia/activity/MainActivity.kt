@@ -21,7 +21,13 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val editedText = result.data?.getStringExtra(EditPostActivity.EXTRA_EDITED_TEXT)
                 editedText?.let { text ->
-                    viewModel.updatePostText(text)
+                    val postId = result.data?.getLongExtra(EditPostActivity.EXTRA_POST_ID, -1)
+                    if (postId != null) {
+                        viewModel.getPostById(postId)?.let { post ->
+                            viewModel.changeContent(text)
+                            viewModel.save()
+                        }
+                    }
                 }
             }
         }
@@ -77,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, EditPostActivity::class.java)
         post?.let {
             intent.putExtra(EditPostActivity.EXTRA_POST_ID, it.id)
+            intent.putExtra(EditPostActivity.EXTRA_EDITED_TEXT, it.content)
         }
         updatePostLauncher.launch(intent)
     }

@@ -43,19 +43,18 @@ class PostViewModel : ViewModel() {
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun updatePostText(text: String) {
-        edited.value?.let { post ->
-            val updatedPost = post.copy(content = text)
-            repository.save(updatedPost)
-            edited.value = updatedPost
-        }
-    }
+//    fun updatePostText(text: String) {
+//        edited.value?.let { post ->
+//            val updatedPost = post.copy(content = text)
+//            repository.save(updatedPost)
+//            edited.value = empty   // Освобождаю редактируемый пост и записываю в него шаблон нового
+//        }
+//    }
 
     fun likeById(id: Long) = repository.likeById(id)
     fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
-    fun getPostTextById(postId: Long): String {       // Получаем текст поста по его идентификатору
-        val post = data.value?.find { it.id == postId }
-        return post?.content ?: ""
+    fun getPostById(postId: Long): Post? {
+        return data.value?.find { it.id == postId }
     }
 }
