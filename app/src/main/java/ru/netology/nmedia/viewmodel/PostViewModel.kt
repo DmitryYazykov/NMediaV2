@@ -1,12 +1,13 @@
 package ru.netology.nmedia.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
+import ru.netology.nmedia.repository.PostRepositoryFileImpl
 
-private val empty = Post(                         // data-объект для заполнения
+private val empty = Post(
     id = 0,
     author = "",
     content = "",
@@ -19,8 +20,14 @@ private val empty = Post(                         // data-объект для з
     video = ""
 )
 
-class PostViewModel : ViewModel() {
-    private val repository: PostRepository = PostRepositoryInMemoryImpl()
+// передаю экземпляр Application
+class PostViewModel(application: Application) : AndroidViewModel(application) {
+    //private val repository: PostRepository = PostRepositoryInMemoryImpl()
+    //private val repository: PostRepository = PostRepositorySharedPrefsImpl(application)
+
+    // хранение в файле
+    private val repository: PostRepository = PostRepositoryFileImpl(application)
+
     val data = repository.getAll()
     private val edited = MutableLiveData(empty)
 
@@ -42,14 +49,6 @@ class PostViewModel : ViewModel() {
         }
         edited.value = edited.value?.copy(content = text)
     }
-
-//    fun updatePostText(text: String) {
-//        edited.value?.let { post ->
-//            val updatedPost = post.copy(content = text)
-//            repository.save(updatedPost)
-//            edited.value = empty   // Освобождаю редактируемый пост и записываю в него шаблон нового
-//        }
-//    }
 
     fun likeById(id: Long) = repository.likeById(id)
     fun shareById(id: Long) = repository.shareById(id)
