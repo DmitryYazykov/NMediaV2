@@ -26,6 +26,7 @@ class PostRepositoryFileImpl(
             // use - реализует весь интерфейс closeable
             context.openFileInput(filename).bufferedReader().use {
                 posts = gson.fromJson(it, type)
+                nextId = posts.maxOfOrNull { it.id }?.inc() ?: 1
                 data.value = posts
             }
             // если файл не существует, сохраняю пустой массив

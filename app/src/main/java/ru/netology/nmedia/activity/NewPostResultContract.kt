@@ -10,7 +10,7 @@ class NewPostResultContract : ActivityResultContract<String?, String?>() {
 
     // контракт создаёт intent и его вызывает
     override fun createIntent(context: Context, input: String?): Intent =
-        Intent(context, NewPostActivity::class.java)
+        Intent(context, NewPostFragment::class.java)
 
     // обработка получаемого результата
     override fun parseResult(resultCode: Int, intent: Intent?): String? =

@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ru.netology.nmedia.databinding.ActivityNewPostBinding
+import ru.netology.nmedia.databinding.FragmentNewPostBinding
 
 class EditPostActivity : AppCompatActivity() {
     companion object {
@@ -12,12 +12,12 @@ class EditPostActivity : AppCompatActivity() {
         const val EXTRA_EDITED_TEXT = "extra_edited_text"
     }
 
-    private lateinit var binding: ActivityNewPostBinding
+    private lateinit var binding: FragmentNewPostBinding
     private var postId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNewPostBinding.inflate(layoutInflater)
+        binding = FragmentNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         postId = intent.getLongExtra(EXTRA_POST_ID, -1)
