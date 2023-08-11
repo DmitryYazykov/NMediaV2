@@ -17,25 +17,8 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
-    //private lateinit var binding: ActivityMainBinding
 
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
-//
-//    private val updatePostLauncher =
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                val editedText = result.data?.getStringExtra(EditPostActivity.EXTRA_EDITED_TEXT)
-//                editedText?.let { text ->
-//                    val postId = result.data?.getLongExtra(EditPostActivity.EXTRA_POST_ID, -1)
-//                    if (postId != null) {
-//                        viewModel.getPostById(postId)?.let { post ->
-//                            viewModel.changeContent(text)
-//                            viewModel.save()
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,11 +56,7 @@ class FeedFragment : Fragment() {
                 startActivity(shareIntent)
             }
         })
-//        val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
-//            result ?: return@registerForActivityResult
-//            viewModel.changeContent(result)
-//            viewModel.save()
-//        }
+
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
@@ -92,13 +71,4 @@ class FeedFragment : Fragment() {
         }
         return binding.root
     }
-
-//    private fun openEditPostActivity(post: Post?) {
-//        val intent = Intent(this, EditPostActivity::class.java)
-//        post?.let {
-//            intent.putExtra(EditPostActivity.EXTRA_POST_ID, it.id)
-//            intent.putExtra(EditPostActivity.EXTRA_EDITED_TEXT, it.content)
-//        }
-//        updatePostLauncher.launch(intent)
-//    }
 }
