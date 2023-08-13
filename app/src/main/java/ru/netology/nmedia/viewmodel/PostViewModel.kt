@@ -1,35 +1,27 @@
 package ru.netology.nmedia.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryFileImpl
+import ru.netology.nmedia.repository.*
 
 private val empty = Post(
     id = 0,
-    author = "",
     content = "",
-    published = "",
-    likes = 0,
+    author = "",
     likedByMe = false,
-    share = 0,
-    shareByMe = false,
-    view = 0,
-    video = ""
+    likes = 0,
+    published = ""
 )
 
-// передаю экземпляр Application
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    //private val repository: PostRepository = PostRepositoryInMemoryImpl()
-    //private val repository: PostRepository = PostRepositorySharedPrefsImpl(application)
-
-    // хранение в файле
-    private val repository: PostRepository = PostRepositoryFileImpl(application)
-
+    // упрощённый вариант
+    private val repository: PostRepository = PostRepositoryImpl(
+        AppDb.getInstance(context = application).postDao()
+    )
     val data = repository.getAll()
-    private val edited = MutableLiveData(empty)
+    val edited = MutableLiveData(empty)
 
     fun save() {
         edited.value?.let {
@@ -51,9 +43,5 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(id: Long) = repository.likeById(id)
-    fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
-    fun getPostById(postId: Long): Post? {
-        return data.value?.find { it.id == postId }
-    }
 }

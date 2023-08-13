@@ -8,31 +8,40 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.util.StringProperty
+import ru.netology.nmedia.util.AndroidUtils
+import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class NewPostFragment : Fragment() {
+
+    companion object {
+        var Bundle.textArg: String? by StringArg
+    }
+
+    private val viewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentNewPostBinding.inflate(layoutInflater, container, false)
-        arguments?.textArg?.let { binding.editText.setText(it) }
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
-        binding.editText.requestFocus()
-        binding.save.setOnClickListener {                     // обработчик на кнопку Save
-            val content = binding.editText.text.toString()     // content из строки ввода
-            if (content.isNotBlank()) {                 // проверка текста, сохранение во view-model
-                viewModel.changeContent(content)
-                viewModel.save()
-            }
-            findNavController().navigateUp()            // иначе - выходим
+        val binding = FragmentNewPostBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+
+        arguments?.textArg
+            ?.let(binding.edit::setText)
+
+        binding.ok.setOnClickListener {
+            viewModel.changeContent(binding.edit.text.toString())
+            viewModel.save()
+            AndroidUtils.hideKeyboard(requireView())
+            findNavController().navigateUp()
         }
         return binding.root
-    }
-
-    companion object {
-        var Bundle.textArg by StringProperty
     }
 }

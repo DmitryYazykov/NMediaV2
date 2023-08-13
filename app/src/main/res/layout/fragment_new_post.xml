@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".activity.NewPostFragment">
 
-    <EditText
-        android:id="@+id/editText"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
         android:gravity="start|top"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine">
+    </com.google.android.material.textfield.TextInputEditText>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
@@ -22,10 +22,10 @@
         android:layout_gravity="bottom" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/save"
+        android:id="@+id/ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/save"
+        android:contentDescription="@string/description_post_save"
         app:layout_anchor="@id/bottomAppBar"
         app:srcCompat="@drawable/ic_ok_24dp" />
 
