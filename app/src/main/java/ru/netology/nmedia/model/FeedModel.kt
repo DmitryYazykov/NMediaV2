@@ -7,5 +7,4 @@ data class FeedModel(
     val error: Boolean = false,                      // сообщение об ошибке
     val loading: Boolean = false,                    // состояние загрузки
     val empty: Boolean = false,                      // дополнительно - пустой список
-    val refreshing: Boolean = false,
 )

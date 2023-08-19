@@ -7,9 +7,7 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
-import java.io.IOException
 import java.lang.Exception
-//import kotlin.Exception
 import kotlin.concurrent.thread
 
 private val empty = Post(

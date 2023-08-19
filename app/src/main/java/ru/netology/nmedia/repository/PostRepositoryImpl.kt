@@ -8,7 +8,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.entity.PostEntity
 import java.util.concurrent.TimeUnit
 
 class PostRepositoryImpl(
@@ -56,7 +55,7 @@ class PostRepositoryImpl(
         dao.likeById(id)
     }
 
-    override fun save(post: Post) : Post {
+    override fun save(post: Post): Post {
         val request = Request.Builder()               // запрос на сохранение поста
             .url("${BASE_URL}api/slow/posts")
             .post(gson.toJson(post).toRequestBody(mediaType))
