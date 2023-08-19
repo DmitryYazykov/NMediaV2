@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -58,8 +59,14 @@ class FeedFragment : Fragment() {
             }
         })
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts)
+        // обращение к viewModel
+        viewModel.save()
+        // получение состояния state фрагментом
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            binding.errorGroup.isVisible = state.error
+            binding.empty.isVisible = state.empty
+            binding.progress.isVisible = state.loading
+            adapter.submitList(state.posts)
         }
 
         binding.fab.setOnClickListener {

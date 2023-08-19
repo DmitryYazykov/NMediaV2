@@ -27,6 +27,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders.usesCleartextTraffic = false
+        }
+        debug {
+            manifestPlaceholders.usesCleartextTraffic = true
         }
     }
     compileOptions {
@@ -74,7 +78,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging-ktx"
     implementation "com.google.android.gms:play-services-base:$play_services_base_version"
     implementation "androidx.navigation:navigation-common:$navigation_common_version"
-    implementation "androidx.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"

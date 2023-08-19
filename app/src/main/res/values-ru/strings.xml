@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NMedia</string>
+    <string name="app_name">НМедиа</string>
     <string name="hello">Привет, Мир!</string>
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="description_post_menu">Меню поста</string>
@@ -18,4 +18,7 @@
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="channel_remote_name">Уведомления с сервера</string>
     <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="empty">Пусто</string>
+    <string name="network_error">Ошибка сети</string>
+    <string name="retry">Повторить</string>
 </resources>
