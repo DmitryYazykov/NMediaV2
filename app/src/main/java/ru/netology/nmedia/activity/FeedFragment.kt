@@ -59,14 +59,15 @@ class FeedFragment : Fragment() {
             }
         })
         binding.list.adapter = adapter
-        // обращение к viewModel
-        viewModel.save()
-        // получение состояния state фрагментом
         viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.progress.isVisible = state.loading
             binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
-            binding.progress.isVisible = state.loading
-            adapter.submitList(state.posts)
+        }
+
+        binding.retry.setOnClickListener {
+            viewModel.loadPosts()
         }
 
         binding.fab.setOnClickListener {
