@@ -7,7 +7,7 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
-import java.lang.Exception
+import kotlin.Exception
 import kotlin.concurrent.thread
 
 private val empty = Post(
@@ -75,7 +75,29 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun likeById(id: Long) = repository.likeById(id)
+    fun likeById(post: Post) {
+        thread {
+            try {
+                val updatePost = if (post.likedByMe) {      // если пост был лайкнут
+                    repository.unlikeById(post.id)
+                } else {                                           // если не лайкнут
+                    repository.likeById(post.id)
+                }
+                // кладём в новый список
+                val newPosts = _data.value?.posts?.map {
+                    if (it.id == post.id) {              // если id совпадает, берём новый пост
+                        updatePost
+                    } else {                             // если id не совпадает, берём старый пост
+                        it
+                    }
+                }.orEmpty()                              // пустой список
+                _data.postValue(_data.value?.copy(posts = newPosts))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun removeById(id: Long) {
         thread {
             val old = _data.value
