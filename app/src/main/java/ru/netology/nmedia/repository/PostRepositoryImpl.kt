@@ -2,18 +2,21 @@ package ru.netology.nmedia.repository
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import okhttp3.internal.EMPTY_REQUEST
-import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
+import java.io.IOException
 import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 
 class PostRepositoryImpl(
-    private val dao: PostDao,
+    //private val dao: PostDao,
 ) : PostRepository {
 
     // Настраиваю okhttp клиент
@@ -34,25 +37,27 @@ class PostRepositoryImpl(
         private val jsonType = "application/json".toMediaType()
     }
 
-    override fun getAll(): List<Post> {
-        // подготовим запрос
+    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
         val request = Request.Builder()
             .url("${BASE_URL}api/slow/posts")
             .build()
-        // использование клиента для создания вызова - возвращаем результат
-        return client.newCall(request)
-            .execute()
-            // прочитать ответ в виде строки либо ошибка
-            .let { it.body?.string() ?: throw RuntimeException("body is null") }
-            // преобразование строки в нужный вид
-            .let { gson.fromJson(it, typeToken) }
-    }
 
-//    override fun getAll(): LiveData<List<Post>> = dao.getAll().map { list ->
-//        list.map {
-//            it.toDto()
-//        }
-//    }
+        client.newCall(request)
+            .enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    try {
+                        val body = response.body?.string() ?: throw RuntimeException("body is null")
+                        callback.onSuccess(gson.fromJson(body, typeToken))
+                    } catch (e: Exception) {
+                        callback.onError()
+                    }
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    callback.onError()
+                }
+            })
+    }
 
     override fun likeById(id: Long): Post {                     // запрос на постановку лайка
         //dao.likeById(id)
@@ -94,6 +99,10 @@ class PostRepositoryImpl(
             }.let {
                 gson.fromJson(it, post::class.java)
             }
+    }
+
+    override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
+        TODO("Not yet implemented")
     }
 
     override fun removeById(id: Long) {

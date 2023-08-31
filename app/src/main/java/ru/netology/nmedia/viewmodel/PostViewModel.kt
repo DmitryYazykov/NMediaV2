@@ -2,7 +2,6 @@ package ru.netology.nmedia.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.*
@@ -14,6 +13,7 @@ private val empty = Post(
     id = 0,
     content = "",
     author = "",
+    authorAvatar = "",
     likedByMe = false,
     likes = 0,
     published = ""
@@ -22,7 +22,7 @@ private val empty = Post(
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     // упрощённый вариант
     private val repository: PostRepository = PostRepositoryImpl(
-        AppDb.getInstance(context = application).postDao()
+        //AppDb.getInstance(context = application).postDao()
     )
     private val _data = MutableLiveData(FeedModel())
     val data: LiveData<FeedModel> = _data
@@ -37,18 +37,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadPosts() {
-        thread {                                                       // фоновый thread
-
-            _data.postValue(FeedModel(loading = true))                 // state с загрузкой
-            try {
-                val data = repository.getAll()              // обращение к серверу
-                FeedModel(posts = data, empty = data.isEmpty())
-            } catch (e: Exception) {                                   // обработка ошибок
-                FeedModel(error = true)
-            }.also {
-                _data.postValue(it)                                    // передаём в LiveData
+        _data.postValue(FeedModel(loading = true))
+        repository.getAllAsync(object : PostRepository.Callback<List<Post>> {
+            override fun onSuccess(posts: List<Post>) {
+                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
-        }
+
+            override fun onError() {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
 
     fun save() {
