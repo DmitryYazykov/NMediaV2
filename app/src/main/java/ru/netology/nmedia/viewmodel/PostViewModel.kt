@@ -78,41 +78,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun likeById(post: Post) {
         repository.likeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
             override fun onSuccess(posts: Unit) {
-                if (post.likedByMe) {
-                    repository.unlikeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
-                        override fun onSuccess(posts: Unit) {
-                            val newPosts = _data.value?.posts?.map {
-                                if (it.id == post.id) {
-                                    post.copy(likedByMe = false, likes = it.likes - 1)
-                                } else {
-                                    it
-                                }
-                            }.orEmpty()
-                            _data.postValue(_data.value?.copy(posts = newPosts))
-                        }
-
-                        override fun onError() {
-                            _data.postValue(FeedModel(error = true))
-                        }
-                    })
-                } else {
-                    repository.likeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
-                        override fun onSuccess(posts: Unit) {
-                            val newPosts = _data.value?.posts?.map {
-                                if (it.id == post.id) {
-                                    post.copy(likedByMe = true, likes = it.likes + 1)
-                                } else {
-                                    it
-                                }
-                            }.orEmpty()
-                            _data.postValue(_data.value?.copy(posts = newPosts))
-                        }
-
-                        override fun onError() {
-                            _data.postValue(FeedModel(error = true))
-                        }
-                    })
-                }
+                val newPosts = _data.value?.posts?.map {
+                    if (it.id == post.id) {
+                        post.copy(likedByMe = !post.likedByMe, likes = if (post.likedByMe) it.likes - 1 else it.likes + 1)
+                    } else {
+                        it
+                    }
+                }.orEmpty()
+                _data.postValue(_data.value?.copy(posts = newPosts))
             }
 
             override fun onError() {
@@ -120,7 +93,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         })
     }
-
     fun removeById(id: Long) {
         val old = _data.value
         _data.postValue(
