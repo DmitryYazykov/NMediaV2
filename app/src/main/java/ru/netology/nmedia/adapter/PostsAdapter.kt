@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -41,6 +43,19 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
+
+
+            // Загрузка аватара с использованием Glide
+            val avatarUrl = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+
+            Glide.with(binding.avatar)
+                .load(avatarUrl)
+                .apply(RequestOptions.circleCropTransform()) // Округленный аватар
+                .placeholder(R.drawable.ic_loading_100dp)    // Изображение во время загрузки
+                .error(R.drawable.ic_error_100dp)            // Если ошибки загрузки
+                .timeout(10_000)                   // Таймаут
+                .into(binding.avatar)                        // ImageView для аватара
+
             // в адаптере
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
