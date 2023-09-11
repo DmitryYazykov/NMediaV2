@@ -37,12 +37,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun loadPosts() {
         _data.postValue(FeedModel(loading = true))
         repository.getAllAsync(object : PostRepository.Callback<List<Post>> {
-            override fun onSuccess(posts: List<Post>) {
-                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+            override fun onSuccess(result: List<Post>) {
+                _data.value = FeedModel(posts = result, empty = result.isEmpty())
             }
 
-            override fun onError() {
-                _data.postValue(FeedModel(error = true))
+            override fun onError(e: Exception) {
+                _data.value = FeedModel(error = true)
             }
         })
     }
@@ -50,11 +50,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun save() {
         edited.value?.let { post ->
             repository.saveAsync(post, object : PostRepository.Callback<Unit> {
-                override fun onSuccess(posts: Unit) {
+                override fun onSuccess(result: Unit) {
                     _postCreated.postValue(Unit)
                 }
 
-                override fun onError() {
+                override fun onError(e: Exception) {
                     _data.postValue(FeedModel(error = true))
                 }
             })
@@ -78,7 +78,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun likeById(post: Post) {
         if (post.likedByMe) {
             repository.unlikeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
-                override fun onSuccess(posts: Unit) {
+                override fun onSuccess(result: Unit) {
                     val newPosts = _data.value?.posts?.map {
                         if (it.id == post.id) {
                             post.copy(likedByMe = false, likes = it.likes - 1)
@@ -88,14 +88,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     }.orEmpty()
                     _data.postValue(_data.value?.copy(posts = newPosts))
                 }
-
-                override fun onError() {
+                override fun onError(e: Exception) {
                     _data.postValue(FeedModel(error = true))
                 }
             })
         } else {
             repository.likeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
-                override fun onSuccess(posts: Unit) {
+                override fun onSuccess(result: Unit) {
                     val newPosts = _data.value?.posts?.map {
                         if (it.id == post.id) {
                             post.copy(likedByMe = true, likes = it.likes + 1)
@@ -105,8 +104,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     }.orEmpty()
                     _data.postValue(_data.value?.copy(posts = newPosts))
                 }
-
-                override fun onError() {
+                override fun onError(e: Exception) {
                     _data.postValue(FeedModel(error = true))
                 }
             })
@@ -122,15 +120,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 }
             )
         )
-        repository.removeByIdAsync(id, object : PostRepository.Callback<Unit> {
-            override fun onSuccess(posts: Unit) {
+        repository.removeAsync(id, object : PostRepository.Callback<Unit> {
+            override fun onSuccess(result: Unit) {
 
             }
 
-            override fun onError() {
+            override fun onError(e: Exception) {
                 _data.postValue(FeedModel(error = true))
             }
-
         })
     }
 }

@@ -20,4 +20,7 @@
     <string name="empty">Empty</string>
     <string name="network_error">Network error</string>
     <string name="retry">Retry</string>
+    <string name="views">views</string>
+    <string name="attachment">attachment</string>
+    <string name="random_number" translatable="false">123</string>
 </resources>

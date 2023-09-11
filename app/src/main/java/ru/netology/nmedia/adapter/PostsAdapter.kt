@@ -1,6 +1,7 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -11,6 +12,7 @@ import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import ru.netology.nmedia.util.glideDownloadFullImage
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -37,6 +39,9 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
+    private val serverPathUrl = "http://10.0.2.2:9999/"
+    private val avatarsPathUrl = "${serverPathUrl}/avatars"
+    private val attachmentsUrl = "${serverPathUrl}/images"
 
     fun bind(post: Post) {
         binding.apply {
@@ -44,9 +49,15 @@ class PostViewHolder(
             published.text = post.published
             content.text = post.content
 
+            val avatarUrl = "${avatarsPathUrl}/${post.authorAvatar}"
 
-            // Загрузка аватара с использованием Glide
-            val avatarUrl = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+            if (post.attachment != null) {
+                val downloadAttachUrl = "${attachmentsUrl}/${post.attachment.url}"
+                glideDownloadFullImage(downloadAttachUrl, binding.attachment)
+                binding.attachment.visibility = View.VISIBLE }
+            else {
+                binding.attachment.visibility = View.GONE
+            }
 
             Glide.with(binding.avatar)
                 .load(avatarUrl)

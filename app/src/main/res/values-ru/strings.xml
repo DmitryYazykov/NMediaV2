@@ -21,4 +21,7 @@
     <string name="empty">Пусто</string>
     <string name="network_error">Ошибка сети</string>
     <string name="retry">Повторить</string>
+    <string name="views">Просмотры</string>
+    <string name="attachment">Вложения</string>
+    <string name="random_number">Случайное число</string>
 </resources>
