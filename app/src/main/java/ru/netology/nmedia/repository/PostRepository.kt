@@ -18,6 +18,6 @@ interface PostRepository {
 
     interface Callback<T> {                            // общий дженерик-интерфейс
         fun onSuccess(result: T)
-        fun onError(e: Exception)
+        fun onError(e: Any)
     }
 }

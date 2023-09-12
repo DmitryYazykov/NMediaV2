@@ -13,7 +13,7 @@ object AndroidUtils {
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
-fun glideDownloadFullImage (url:String, view: View)  {
+fun glideDownloadFullImage (url:String, view: View, context: Context)  {
     Glide.with(view)
         .load(url)
         .error(R.drawable.ic_error_100dp)
