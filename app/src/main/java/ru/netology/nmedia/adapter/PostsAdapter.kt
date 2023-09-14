@@ -53,7 +53,8 @@ class PostViewHolder(
 
             if (post.attachment != null) {
                 val downloadAttachUrl = "${attachmentsUrl}/${post.attachment.url}"
-                glideDownloadFullImage(downloadAttachUrl, binding.attachment)
+                //glideDownloadFullImage(downloadAttachUrl, binding.attachment)
+                glideDownloadFullImage(downloadAttachUrl, binding.attachment, binding.root.context)
                 binding.attachment.visibility = View.VISIBLE }
             else {
                 binding.attachment.visibility = View.GONE

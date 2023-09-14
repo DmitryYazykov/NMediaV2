@@ -19,7 +19,11 @@ class PostRepositoryImpl : PostRepository {
             .enqueue(object : Callback<List<Post>> {
             override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
                 if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.errorBody()?.string()))
+                    if (response.code() != null) {
+                        callback.onError(response.code())
+                    } else {
+                        callback.onError(RuntimeException(response.errorBody()?.string()))
+                    }
                     return
                 }
 

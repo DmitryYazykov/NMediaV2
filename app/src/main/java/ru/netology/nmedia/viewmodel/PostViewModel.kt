@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewmodel
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.*
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
@@ -30,6 +31,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit> = _postCreated
 
+    val serverError: Toast = Toast.makeText(
+        getApplication(),
+        "Ошибка со стороны сервера.\nПерезагрузите ещё раз.",
+        Toast.LENGTH_SHORT
+    )
+
     init {
         loadPosts()
     }
@@ -41,8 +48,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _data.value = FeedModel(posts = result, empty = result.isEmpty())
             }
 
-            override fun onError(e: Exception) {
-                _data.value = FeedModel(error = true)
+            override fun onError(e: Any) {
+                val text = when (e) {
+                    is Int -> "Ошибка HTTP: $e"
+                    else -> "Ошибка сети"
+                }
+                println(text)
+                Toast.makeText(
+                    getApplication(),
+                    text,
+                    Toast.LENGTH_SHORT
+                ).show()
+                _data.postValue(FeedModel(error = true))
             }
         })
     }
@@ -54,7 +71,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     _postCreated.postValue(Unit)
                 }
 
-                override fun onError(e: Exception) {
+                override fun onError(e: Any) {
+                    serverError.show()
                     _data.postValue(FeedModel(error = true))
                 }
             })
@@ -88,8 +106,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     }.orEmpty()
                     _data.postValue(_data.value?.copy(posts = newPosts))
                 }
-                override fun onError(e: Exception) {
-                    _data.postValue(FeedModel(error = true))
+
+                override fun onError(e: Any) {
+                    serverError.show()
+                    //_data.postValue(FeedModel(error = true))
                 }
             })
         } else {
@@ -104,8 +124,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     }.orEmpty()
                     _data.postValue(_data.value?.copy(posts = newPosts))
                 }
-                override fun onError(e: Exception) {
-                    _data.postValue(FeedModel(error = true))
+
+                override fun onError(e: Any) {
+                    serverError.show()
+                    //_data.postValue(FeedModel(error = true))
                 }
             })
         }
@@ -125,7 +147,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
             }
 
-            override fun onError(e: Exception) {
+            override fun onError(e: Any) {
+                serverError.show()
                 _data.postValue(FeedModel(error = true))
             }
         })
