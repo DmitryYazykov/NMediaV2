@@ -48,18 +48,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _data.value = FeedModel(posts = result, empty = result.isEmpty())
             }
 
-            override fun onError(e: Any) {
-                val text = when (e) {
-                    is Int -> "Ошибка HTTP: $e"
-                    else -> "Ошибка сети"
+            override fun onError(exception: java.lang.Exception) {
+                if (exception is NumberResponseError) {
+                    _data.postValue(
+                        FeedModel(
+                            codeResponse = exception.code,
+                            posts = _data.value?.posts.orEmpty(),
+                            serverError = true, error = true
+                        )
+                    )
+                } else {
+                    _data.value = FeedModel(error = true)
                 }
-                println(text)
-                Toast.makeText(
-                    getApplication(),
-                    text,
-                    Toast.LENGTH_SHORT
-                ).show()
-                _data.postValue(FeedModel(error = true))
             }
         })
     }
@@ -71,7 +71,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     _postCreated.postValue(Unit)
                 }
 
-                override fun onError(e: Any) {
+                override fun onError(exception: Exception) {
                     serverError.show()
                     _data.postValue(FeedModel(error = true))
                 }
@@ -93,44 +93,21 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun likeById(post: Post) {
-        if (post.likedByMe) {
-            repository.unlikeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
-                override fun onSuccess(result: Unit) {
-                    val newPosts = _data.value?.posts?.map {
-                        if (it.id == post.id) {
-                            post.copy(likedByMe = false, likes = it.likes - 1)
-                        } else {
-                            it
-                        }
-                    }.orEmpty()
-                    _data.postValue(_data.value?.copy(posts = newPosts))
-                }
+    fun likePostAsync(likedPost: Post) {
+        repository.likePostAsync(likedPost, object : PostRepository.Callback<Post> {
+            override fun onSuccess(result: Post) {
+                val updatedPosts = _data.value?.posts?.map {
+                    if (it.id == result.id) {
+                        result
+                    } else it
+                }.orEmpty()
+                _data.postValue(_data.value?.copy(posts = updatedPosts))
+            }
 
-                override fun onError(e: Any) {
-                    serverError.show()
-                    //_data.postValue(FeedModel(error = true))
-                }
-            })
-        } else {
-            repository.likeByIdAsync(post.id, object : PostRepository.Callback<Unit> {
-                override fun onSuccess(result: Unit) {
-                    val newPosts = _data.value?.posts?.map {
-                        if (it.id == post.id) {
-                            post.copy(likedByMe = true, likes = it.likes + 1)
-                        } else {
-                            it
-                        }
-                    }.orEmpty()
-                    _data.postValue(_data.value?.copy(posts = newPosts))
-                }
-
-                override fun onError(e: Any) {
-                    serverError.show()
-                    //_data.postValue(FeedModel(error = true))
-                }
-            })
-        }
+            override fun onError(exception: java.lang.Exception) {
+                serverError.show()
+            }
+        })
     }
 
     fun removeById(id: Long) {
@@ -147,7 +124,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
             }
 
-            override fun onError(e: Any) {
+            override fun onError(exception: Exception) {
                 serverError.show()
                 _data.postValue(FeedModel(error = true))
             }

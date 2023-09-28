@@ -10,14 +10,13 @@ interface PostRepository {
     // асинхронный
     fun getAllAsync(callback: Callback<List<Post>>)
     fun saveAsync(post: Post, callback: Callback<Unit>)
-    fun likeByIdAsync(id: Long, callback: Callback<Unit>)
-    fun unlikeByIdAsync(id: Long, callback: Callback<Unit>)
-
-    //fun likeAsync(likedPost: Post, callback: Callback<Post>)
+    fun likePostAsync(likedPost: Post, callback: Callback<Post>)
     fun removeAsync(id: Long, callback: Callback<Unit>)
 
     interface Callback<T> {                            // общий дженерик-интерфейс
         fun onSuccess(result: T)
-        fun onError(e: Any)
+        fun onError(exception: Exception)
     }
 }
+
+class NumberResponseError(val code: Int) : Exception()

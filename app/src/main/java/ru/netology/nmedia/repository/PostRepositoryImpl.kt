@@ -17,29 +17,21 @@ class PostRepositoryImpl : PostRepository {
     override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
         PostsApi.service.getAll()
             .enqueue(object : Callback<List<Post>> {
-            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-                if (!response.isSuccessful) {
-                    if (response.code() != null) {
-                        callback.onError(response.code())
-                    } else {
-                        callback.onError(RuntimeException(response.errorBody()?.string()))
+                override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+                    if (!response.isSuccessful) {
+                        callback.onError(NumberResponseError(response.code()))
+                        return
                     }
-                    return
+                    val body = (response.body() ?: run {
+                        callback.onError(NumberResponseError(response.code()))
+                    }) as List<Post>
+                    callback.onSuccess(body)
                 }
 
-                val body = (response.body() ?: run {
-                    callback.onError(RuntimeException("response is empty"))
-
-                    return
-                })
-
-                callback.onSuccess(body)
-            }
-
-            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                callback.onError(RuntimeException(t))
-            }
-        })
+                override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                    callback.onError(RuntimeException(t))
+                }
+            })
     }
 
     override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
@@ -59,38 +51,32 @@ class PostRepositoryImpl : PostRepository {
             })
     }
 
-    override fun likeByIdAsync(id: Long, callback: PostRepository.Callback<Unit>) {
-        PostsApi.service.likePost(id)
-            .enqueue(object : Callback<Post> {
+    override fun likePostAsync(likedPost: Post, callback: PostRepository.Callback<Post>) {
+        val callbackLikeOrDislike = object : Callback<Post> {
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                if (response.isSuccessful) {
-                    callback.onSuccess(Unit)
-                } else {
-                    callback.onError(RuntimeException(response.errorBody()?.string()))
+                if (!response.isSuccessful) {
+                    callback.onError(NumberResponseError(response.code()))
+                    return
                 }
+                val body = (response.body() ?: run {
+                    callback.onError(RuntimeException("response is empty"))
+                }) as Post
+                callback.onSuccess(body)
             }
 
             override fun onFailure(call: Call<Post>, t: Throwable) {
                 callback.onError(RuntimeException(t))
             }
-        })
-    }
-
-    override fun unlikeByIdAsync(id: Long, callback: PostRepository.Callback<Unit>) {
-        PostsApi.service.unlikePost(id)
-            .enqueue(object : Callback<Post> {
-            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                if (response.isSuccessful) {
-                    callback.onSuccess(Unit)
-                } else {
-                    callback.onError(RuntimeException(response.errorBody()?.string()))
-                }
-            }
-
-            override fun onFailure(call: Call<Post>, t: Throwable) {
-                callback.onError(RuntimeException(t))
-            }
-        })
+        }
+        if (!likedPost.likedByMe) {
+            PostsApi.service.likePost(likedPost.id)
+                .enqueue(callbackLikeOrDislike)
+        } else {
+            if (likedPost.likes > 0) {
+                PostsApi.service.unlikePost(likedPost.id)
+                    .enqueue(callbackLikeOrDislike)
+            } else return
+        }
     }
 
     override fun removeAsync(id: Long, callback: PostRepository.Callback<Unit>) {
