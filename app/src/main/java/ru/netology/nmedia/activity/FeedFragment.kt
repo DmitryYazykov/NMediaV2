@@ -50,7 +50,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likePostAsync(post)
+                viewModel.likeById(post)
             }
 
             override fun onRemove(post: Post) {
@@ -72,10 +72,13 @@ class FeedFragment : Fragment() {
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
-            binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
             swipeRefreshLayout.isRefreshing = false    // Завершаем обновление
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
         }
 
         binding.retry.setOnClickListener {

@@ -1,97 +1,85 @@
 package ru.netology.nmedia.repository
 
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.lifecycle.map
+import okio.IOException
 import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
-import kotlin.RuntimeException
+import ru.netology.nmedia.entity.PostEntity
+import ru.netology.nmedia.entity.toDto
+import ru.netology.nmedia.entity.toEntity
+import ru.netology.nmedia.errors.ErrorsApplication
 
-class PostRepositoryImpl : PostRepository {
-    override fun getAll(): List<Post> {
-        return PostsApi.service.getAll()
-            .execute()
-            .let { it.body() ?: throw RuntimeException("Body is null") }
-    }
+class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
+    override val data = dao.getAll().map(List<PostEntity>::toDto)
 
-    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
-        PostsApi.service.getAll()
-            .enqueue(object : Callback<List<Post>> {
-                override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-                    if (!response.isSuccessful) {
-                        callback.onError(NumberResponseError(response.code()))
-                        return
-                    }
-                    val body = (response.body() ?: run {
-                        callback.onError(NumberResponseError(response.code()))
-                    }) as List<Post>
-                    callback.onSuccess(body)
-                }
-
-                override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                    callback.onError(RuntimeException(t))
-                }
-            })
-    }
-
-    override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
-        PostsApi.service.savePost(post)
-            .enqueue(object : Callback<Post> {
-                override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                    if (!response.isSuccessful) {
-                        callback.onError(RuntimeException(response.errorBody()?.string()))
-                        return
-                    }
-                    callback.onSuccess(Unit)
-                }
-
-                override fun onFailure(call: Call<Post>, t: Throwable) {
-                    callback.onError(RuntimeException(t))
-                }
-            })
-    }
-
-    override fun likePostAsync(likedPost: Post, callback: PostRepository.Callback<Post>) {
-        val callbackLikeOrDislike = object : Callback<Post> {
-            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                if (!response.isSuccessful) {
-                    callback.onError(NumberResponseError(response.code()))
-                    return
-                }
-                val body = (response.body() ?: run {
-                    callback.onError(RuntimeException("response is empty"))
-                }) as Post
-                callback.onSuccess(body)
+    override suspend fun getAll() {
+        try {
+            val response = PostsApi.service.getAll()
+            if (!response.isSuccessful) {
+                throw ErrorsApplication.ApiError(response.code(), response.message())
             }
 
-            override fun onFailure(call: Call<Post>, t: Throwable) {
-                callback.onError(RuntimeException(t))
-            }
-        }
-        if (!likedPost.likedByMe) {
-            PostsApi.service.likePost(likedPost.id)
-                .enqueue(callbackLikeOrDislike)
-        } else {
-            if (likedPost.likes > 0) {
-                PostsApi.service.unlikePost(likedPost.id)
-                    .enqueue(callbackLikeOrDislike)
-            } else return
+            val body = response.body() ?: throw ErrorsApplication.ApiError(
+                response.code(),
+                response.message()
+            )
+            dao.insert(body.toEntity())
+        } catch (e: IOException) {
+            throw ErrorsApplication.NetworkError
+        } catch (e: Exception) {
+            throw ErrorsApplication.UnknownError
         }
     }
 
-    override fun removeAsync(id: Long, callback: PostRepository.Callback<Unit>) {
-        PostsApi.service.deletePost(id).enqueue(object : Callback<Unit> {
-            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.errorBody()?.string()))
-                    return
-                }
-                callback.onSuccess(Unit)
+    override suspend fun save(post: Post) {
+        try {
+            val response = PostsApi.service.save(post)
+            if (!response.isSuccessful) {
+                throw ErrorsApplication.ApiError(response.code(), response.message())
             }
 
-            override fun onFailure(call: Call<Unit>, t: Throwable) {
-                callback.onError(RuntimeException(t))
+            val body = response.body() ?: throw ErrorsApplication.ApiError(
+                response.code(),
+                response.message()
+            )
+            dao.insert(PostEntity.fromDto(body))
+        } catch (e: IOException) {
+            throw ErrorsApplication.NetworkError
+        } catch (e: Exception) {
+            throw ErrorsApplication.UnknownError
+        }
+    }
+
+    override suspend fun removePost(id: Long) {
+        dao.removeById(id)
+        try {
+            val response = PostsApi.service.removeById(id)
+            if (!response.isSuccessful) {
+                throw ErrorsApplication.ApiError(response.code(), response.message())
             }
-        })
+        } catch (e: IOException) {
+            throw ErrorsApplication.NetworkError
+        } catch (e: Exception) {
+            throw ErrorsApplication.UnknownError
+        }
+    }
+
+    override suspend fun likePost(post: Post) {
+        dao.likeById(post.id)
+        try {
+            val response = if (!post.likedByMe) {
+                PostsApi.service.likeById(post.id)
+            } else {
+                PostsApi.service.dislikeById(post.id)
+            }
+            if (!response.isSuccessful) {
+                throw ErrorsApplication.ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw ErrorsApplication.NetworkError
+        } catch (e: Exception) {
+            throw ErrorsApplication.UnknownError
+        }
     }
 }
