@@ -33,22 +33,22 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override suspend fun save(post: Post) {
-        try {
-            val response = PostsApi.service.save(post)
-            if (!response.isSuccessful) {
-                throw ErrorsApplication.ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ErrorsApplication.ApiError(
-                response.code(),
-                response.message()
-            )
-            dao.insert(PostEntity.fromDto(body))
+        val response = try {
+            PostsApi.service.save(post)
         } catch (e: IOException) {
             throw ErrorsApplication.NetworkError
         } catch (e: Exception) {
             throw ErrorsApplication.UnknownError
         }
+        if (!response.isSuccessful) {
+            throw ErrorsApplication.ApiError(response.code(), response.message())
+        }
+
+        val body = response.body() ?: throw ErrorsApplication.ApiError(
+            response.code(),
+            response.message()
+        )
+        dao.insert(PostEntity.fromDto(body))
     }
 
     override suspend fun removePost(id: Long) {
