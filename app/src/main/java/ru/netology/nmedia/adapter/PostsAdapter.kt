@@ -1,7 +1,6 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -12,7 +11,6 @@ import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import ru.netology.nmedia.util.glideDownloadFullImage
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -50,15 +48,6 @@ class PostViewHolder(
             content.text = post.content
 
             val avatarUrl = "${avatarsPathUrl}/${post.authorAvatar}"
-
-            if (post.attachment != null) {
-                val downloadAttachUrl = "${attachmentsUrl}/${post.attachment.url}"
-                //glideDownloadFullImage(downloadAttachUrl, binding.attachment)
-                glideDownloadFullImage(downloadAttachUrl, binding.attachment, binding.root.context)
-                binding.attachment.visibility = View.VISIBLE }
-            else {
-                binding.attachment.visibility = View.GONE
-            }
 
             Glide.with(binding.avatar)
                 .load(avatarUrl)
