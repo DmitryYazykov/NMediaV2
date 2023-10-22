@@ -46,25 +46,26 @@ android {
 }
 
 dependencies {
-    def material_version = "1.9.0"
+    def material_version = "1.10.0"
     def fragment_version = "1.6.1"
     def core_version = "1.12.0"
     def appcompat_version = "1.6.1"
     def constraintlayout_version = "2.1.4"
-    def recyclerview_version = "1.3.1"
+    def recyclerview_version = "1.3.2"
     def junit_version = "4.13.2"
     def ext_junit_version = "1.1.5"
     def espresso_core_version = "3.5.1"
-    def activity_version = "1.7.2"
+    def activity_version = "1.8.0"
     def gson_version = "2.10.1"
-    def nav_version = "2.7.3"
-    def room_version = "2.6.0-alpha02"
+    def nav_version = "2.7.4"
+    def room_version = "2.6.0"
     def firebase_version = "32.2.2"
     def play_services_base_version = "18.2.0"
     def okhttp_version = "4.11.0"
     def swiper_refresh_layout = "1.1.0"
     def glide_version = "4.15.1"
     def retrofit_gson_version = "2.9.0"
+    def livedata = "2.6.2"
 
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
@@ -87,6 +88,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata"
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"

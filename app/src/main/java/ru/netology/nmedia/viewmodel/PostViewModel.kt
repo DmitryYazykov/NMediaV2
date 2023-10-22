@@ -9,6 +9,9 @@ import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.*
 import ru.netology.nmedia.util.SingleLiveEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 
 private val empty = Post(
     id = 0,
@@ -24,9 +27,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
 
-    val data: LiveData<FeedModel> = repository.data.map {
-        FeedModel(posts = it, empty = it.isEmpty())
+    val data: LiveData<FeedModel> = repository.data
+        .map(::FeedModel)
+        .catch { e ->
+            //TODO
+            e.printStackTrace()
+        }
+        .asLiveData(Dispatchers.Default)
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        repository.getNeverCount(it.posts.firstOrNull()?.id ?:0L)
+            .asLiveData(Dispatchers.Default)
     }
+
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
         get() = _state
@@ -81,7 +94,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun likeById(post: Post) = viewModelScope.launch {
         try {
-            _state.value = FeedModelState(refreshing = true)
             repository.likePost(post)
             _state.value = FeedModelState()
         } catch (e: Exception) {

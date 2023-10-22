@@ -1,8 +1,15 @@
 package ru.netology.nmedia.repository
 
-import androidx.lifecycle.map
+import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import okio.IOException
-import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.api.*
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
@@ -11,7 +18,27 @@ import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.errors.ErrorsApplication
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
-    override val data = dao.getAll().map(List<PostEntity>::toDto)
+    override val data = dao.getAll()
+        .map(List<PostEntity>::toDto)
+        .flowOn(Dispatchers.Default)
+
+    override fun getNeverCount(id: Long): Flow<Int> = flow {
+        while (true) {
+            delay(10_000L)
+            val response = PostsApi.service.getNewer(id)
+            if (!response.isSuccessful) {
+                throw ErrorsApplication.ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: throw ErrorsApplication.ApiError(
+                response.code(),
+                response.message()
+            )
+            dao.insert(body.toEntity())
+            emit(body.size)
+        }
+    }
+        .catch { e-> throw ErrorsApplication.AppError.from(e) }
+        .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
